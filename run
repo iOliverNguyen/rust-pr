@@ -1,0 +1,9 @@
+#!/bin/bash
+set -eo pipefail
+
+run-hello() {
+    echo "Hello, World!"
+}
+
+# -------- this is the magic ------- #
+source "$PROJECT_ROOT/scripts/_cli.sh"
