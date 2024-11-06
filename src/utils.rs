@@ -1,4 +1,6 @@
 use anyhow::Result;
+use owo_colors::OwoColorize;
+use std::fmt::Display;
 
 pub fn print_title(msg: &str) {
     println!("{}", format_title(msg));
@@ -26,4 +28,14 @@ pub fn format_title(msg: &str) -> String {
         s.push('-')
     }
     s
+}
+
+pub fn log_prefix(prefix: &str, msg: &str) {
+    write_prefix(std::io::stderr(), prefix, msg);
+}
+
+pub fn write_prefix(mut w: impl std::io::Write, prefix: &str, msg: &str) {
+    for line in msg.lines() {
+        writeln!(w, "{}{}", prefix.bright_black(), line.bright_black()).unwrap();
+    }
 }

@@ -1,7 +1,7 @@
+use clap::{ArgAction, Parser, Subcommand};
 use std::path::PathBuf;
-use clap::{Parser, Subcommand, ArgAction};
 
-#[derive(Parser)]
+#[derive(Debug, Parser)]
 #[command(version, about, long_about = None)]
 pub struct Cli {
     // Sets a custom config file
@@ -22,7 +22,7 @@ pub struct Cli {
     pub command: Option<Command>,
 }
 
-#[derive(Subcommand)]
+#[derive(Debug, Subcommand)]
 pub enum Command {
     #[command(about = "list your PRs and status")]
     Ls,

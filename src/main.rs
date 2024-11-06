@@ -1,21 +1,40 @@
 #![allow(unused_variables)]
 
 mod cli;
+mod config;
+mod git;
 mod list;
 mod push;
 mod utils;
-mod config;
-mod git;
 
+use crate::git::RepoInfo;
 use crate::list::list_prs;
 use crate::push::push_prs;
 use crate::utils::print_title;
-use clap::{CommandFactory, Parser, Subcommand};
+use clap::{CommandFactory, Parser};
 use cli::Cli;
-use crate::git::RepoInfo;
+use tracing::Level;
 
 fn main() {
     let args = Cli::parse();
+    {
+        use tracing_subscriber::{filter::Directive, EnvFilter};
+
+        let env_filter = EnvFilter::builder()
+            .with_default_directive(Directive::from(Level::INFO))
+            .with_env_var("LOG_LEVEL")
+            .from_env_lossy();
+        let subscriber = tracing_subscriber::fmt()
+            .with_writer(std::io::stderr) // 👈 use stderr
+            .without_time()
+            .with_file(true)
+            .with_line_number(true);
+        if args.debug {
+            subscriber.with_max_level(Level::DEBUG).init();
+        } else {
+            subscriber.with_env_filter(env_filter).init();
+        }
+    }
 
     match &args.command {
         None => {
@@ -28,7 +47,7 @@ fn main() {
         Some(cmd) => match cmd {
             cli::Command::Ls => list_prs(args),
             cli::Command::Push => push_prs(args),
-        }
+        },
     }
 }
 
